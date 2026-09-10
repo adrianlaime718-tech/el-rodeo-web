@@ -1,48 +1,31 @@
+import { useEffect, useState } from 'react'
+import { getProducts } from '../services/api'
 import type { Product } from '../types/product'
 import './Products.css'
 
 function Products() {
-  const products: Product[] = [
-    {
-      id: 8,
-      category_id: 39,
-      name: 'Pique macho',
-      description: null,
-      price: '50.00',
-      is_available: true,
-      category: {
-        id: 39,
-        name: 'sopas',
-      },
-    },
-    {
-      id: 1,
-      category_id: 1,
-      name: 'Pizza Familiar',
-      description: 'Pizza familiar de especialidad de El Rodeo',
-      price: '80.00',
-      is_available: true,
-      category: {
-        id: 1,
-        name: 'Pizzas',
-      },
-    },
-    {
-      id: 7,
-      category_id: 39,
-      name: 'Sopa de maní',
-      description: null,
-      price: '25.00',
-      is_available: true,
-      category: {
-        id: 39,
-        name: 'sopas',
-      },
-    },
-  ]
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    getProducts()
+      .then(setProducts)
+      .catch(() => {
+        setError('No se pudieron cargar los productos.')
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+  }, [])
 
   return (
     <section className="products">
+
+      {loading && <p>Cargando productos...</p>}
+
+      {error && <p>{error}</p>}
+
       <div className="products-header">
         <div>
           <span className="products-label">GESTIÓN</span>

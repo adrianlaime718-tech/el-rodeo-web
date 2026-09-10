@@ -1,0 +1,98 @@
+.orders {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.orders-header {
+  margin-bottom: 35px;
+}
+
+.orders-label {
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  color: #8b1e1e;
+}
+
+.orders-header h1 {
+  margin-top: 10px;
+  font-size: 36px;
+  color: #222;
+}
+
+.orders-header p {
+  margin-top: 12px;
+  font-size: 16px;
+  color: #666;
+}
+
+.orders-table-container {
+  overflow-x: auto;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.orders-table th {
+  padding: 16px 20px;
+  background: #f8f9fa;
+  color: #555;
+  font-size: 13px;
+  text-align: left;
+}
+
+.orders-table td {
+  padding: 18px 20px;
+  border-top: 1px solid #e5e7eb;
+  color: #555;
+  font-size: 14px;
+}
+
+.orders-table td strong {
+  color: #222;
+}
+
+.status {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.status.pending {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.status.confirmed {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status.completed {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.status.cancelled {
+  background: #fbe9e7;
+  color: #c62828;
+}
+
+@media (max-width: 800px) {
+  .orders-header h1 {
+    font-size: 28px;
+  }
+
+  .orders-table th,
+  .orders-table td {
+    padding: 14px;
+  }
+}
