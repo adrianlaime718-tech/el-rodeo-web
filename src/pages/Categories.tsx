@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react'
-import { getCategories } from '../services/api'
+import {
+  getCategories,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+} from '../services/api'
 import type { Category } from '../types/category'
 import './Categories.css'
 
@@ -7,6 +12,14 @@ function Categories() {
   const [categories, setCategories] = useState<Category[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+
+  const [showForm, setShowForm] = useState(false)
+  const [editingCategoryId, setEditingCategoryId] = useState<number | null>(null)
+
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+  })
 
   useEffect(() => {
     getCategories()
@@ -19,36 +32,163 @@ function Categories() {
       })
   }, [])
 
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      description: '',
+    })
+
+    setEditingCategoryId(null)
+    setShowForm(false)
+  }
+
+  const handleSaveCategory = async () => {
+    try {
+      if (editingCategoryId !== null) {
+        const updatedCategory = await updateCategory(
+          editingCategoryId,
+          {
+            name: formData.name,
+            description: formData.description,
+            is_active: true,
+          }
+        )
+
+        setCategories(
+          categories.map((category) =>
+            category.id === editingCategoryId
+              ? updatedCategory
+              : category
+          )
+        )
+      } else {
+        const newCategory = await createCategory({
+          name: formData.name,
+          description: formData.description,
+          is_active: true,
+        })
+
+        setCategories([...categories, newCategory])
+      }
+
+      resetForm()
+    } catch (error) {
+      setError(
+        editingCategoryId !== null
+          ? 'No se pudo actualizar la categoría.'
+          : 'No se pudo crear la categoría.'
+      )
+    }
+  }
+
+  const handleDeleteCategory = async (category: Category) => {
+    const confirmed = window.confirm(
+      `¿Estás seguro de eliminar la categoría "${category.name}"?`
+    )
+
+    if (!confirmed) {
+      return
+    }
+
+    try {
+      await deleteCategory(category.id)
+
+      setCategories(
+        categories.filter((item) => item.id !== category.id)
+      )
+    } catch (error) {
+      setError('No se pudo eliminar la categoría.')
+    }
+  }
+
   return (
-    // <section>
-    //   <h1>Categorías</h1>
-
-    //   {loading && <p>Cargando categorías...</p>}
-
-    //   {error && <p>{error}</p>}
-
-    //   {!loading && !error && (
-    //     <ul>
-    //       {categories.map((category) => (
-    //         <li key={category.id}>
-    //           <strong>{category.name}</strong>
-    //           <p>{category.description}</p>
-    //         </li>
-    //       ))}
-    //     </ul>
-    //   )}
-    // </section>
-
     <section className="categories">
       <div className="categories-header">
-      <span className="categories-label">GESTIÓN DE CATEGORÍAS</span>
+        <div>
+          {/* <span className="products-label">GESTIÓN</span>
+          <h1>Productos</h1>
+          <p>
+            Administra los productos disponibles en el restaurante El Rodeo.
+          </p> */}
+          <span className="categories-label">
+            GESTIÓN DE CATEGORÍAS
+          </span>
 
-        <h1>Categorías</h1>
+          <h1>Categorías</h1>
 
-        <p>
-          Administra y consulta las categorías de productos del restaurante.
-        </p>
+          <p>
+            Administra y consulta las categorías de productos del restaurante.
+          </p>
+        </div>
+
+        <button
+          className="btn-primary"
+          onClick={() => setShowForm(true)}
+        >
+          + Nueva categoría
+        </button>
       </div>
+
+      {showForm && (
+        <div className="category-form">
+          <h2>
+            {editingCategoryId !== null
+              ? 'Editar categoría'
+              : 'Nueva categoría'}
+          </h2>
+
+          <div className="form-group">
+            <label>Nombre</label>
+
+            <input
+              type="text"
+              placeholder="Nombre de la categoría"
+              value={formData.name}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  name: e.target.value,
+                })
+              }
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Descripción</label>
+
+            <textarea
+              placeholder="Descripción de la categoría"
+              value={formData.description}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  description: e.target.value,
+                })
+              }
+            />
+          </div>
+
+          <div className="form-actions">
+            <button
+              type="button"
+              className="btn-cancel"
+              onClick={resetForm}
+            >
+              Cancelar
+            </button>
+
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={handleSaveCategory}
+            >
+              {editingCategoryId !== null
+                ? 'Actualizar categoría'
+                : 'Guardar categoría'}
+            </button>
+          </div>
+        </div>
+      )}
 
       {loading && <p>Cargando categorías...</p>}
 
@@ -63,6 +203,7 @@ function Categories() {
                 <th>Nombre</th>
                 <th>Descripción</th>
                 <th>Estado</th>
+                <th>Acciones</th>
               </tr>
             </thead>
 
@@ -82,11 +223,42 @@ function Categories() {
                   <td>
                     <span
                       className={`status ${
-                        category.is_active ? 'active' : 'inactive'
+                        category.is_active
+                          ? 'active'
+                          : 'inactive'
                       }`}
                     >
-                      {category.is_active ? 'Activa' : 'Inactiva'}
+                      {category.is_active
+                        ? 'Activa'
+                        : 'Inactiva'}
                     </span>
+                  </td>
+
+                  <td className="category-actions">
+                    <button
+                      className="btn-edit"
+                      onClick={() => {
+                        setEditingCategoryId(category.id)
+                        setShowForm(true)
+
+                        setFormData({
+                          name: category.name,
+                          description:
+                            category.description ?? '',
+                        })
+                      }}
+                    >
+                      Editar
+                    </button>
+
+                    <button
+                      className="btn-delete"
+                      onClick={() =>
+                        handleDeleteCategory(category)
+                      }
+                    >
+                      Eliminar
+                    </button>
                   </td>
                 </tr>
               ))}

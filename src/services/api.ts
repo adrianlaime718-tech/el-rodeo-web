@@ -118,3 +118,131 @@ export async function deleteProduct(id: number): Promise<void> {
     throw new Error('Error al eliminar el producto')
   }
 }
+
+
+export async function createCategory(category: {
+  name: string
+  description: string
+  is_active: boolean
+}): Promise<Category> {
+  const response = await fetch(`${API_URL}/categories`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify(category),
+  })
+
+  if (!response.ok) {
+    throw new Error('Error al crear la categoría')
+  }
+
+  const result: { data: Category } = await response.json()
+
+  return result.data
+}
+
+
+export async function updateCategory(
+  id: number,
+  category: {
+    name: string
+    description: string
+    is_active: boolean
+  }
+): Promise<Category> {
+  const response = await fetch(`${API_URL}/categories/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify(category),
+  })
+
+  if (!response.ok) {
+    throw new Error('Error al actualizar la categoría')
+  }
+
+  const result: { data: Category } = await response.json()
+
+  return result.data
+}
+
+export async function deleteCategory(id: number): Promise<void> {
+  const response = await fetch(`${API_URL}/categories/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Accept': 'application/json',
+    },
+  })
+
+  if (!response.ok) {
+    throw new Error('Error al eliminar la categoría')
+  }
+}
+
+
+export async function createOrder(order: {
+  product_id: number
+  customer_name: string
+  quantity: number
+}): Promise<Order> {
+  const response = await fetch(`${API_URL}/orders`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify(order),
+  })
+
+  if (!response.ok) {
+    throw new Error('Error al crear el pedido')
+  }
+
+  const result: { data: Order } = await response.json()
+
+  return result.data
+}
+
+export async function updateOrder(
+  id: number,
+  order: {
+    product_id: number
+    customer_name: string
+    quantity: number
+    status: string
+  }
+): Promise<Order> {
+  const response = await fetch(`${API_URL}/orders/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify(order),
+  })
+
+  if (!response.ok) {
+    throw new Error('Error al actualizar el pedido')
+  }
+
+  const result: { data: Order } = await response.json()
+
+  return result.data
+}
+
+export async function deleteOrder(id: number): Promise<void> {
+  const response = await fetch(`${API_URL}/orders/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Accept': 'application/json',
+    },
+  })
+
+  if (!response.ok) {
+    throw new Error('Error al eliminar el pedido')
+  }
+}
