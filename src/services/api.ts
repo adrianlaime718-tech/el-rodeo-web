@@ -51,3 +51,70 @@ export async function getOrders(): Promise<Order[]> {
 
   return result.data
 }
+
+export async function createProduct(product: {
+  category_id: number 
+  name: string 
+  description: string 
+  price: number 
+  is_available: boolean 
+}): Promise<Product> { 
+  const response = await fetch(`${API_URL}/products`, { 
+    method: 'POST', 
+    headers: { 
+      'Content-Type': 'application/json', 
+      'Accept': 'application/json', 
+    }, 
+    body: JSON.stringify(product), 
+  }) 
+    
+  if (!response.ok) { 
+    throw new Error('Error al crear el producto') 
+  } 
+  
+  const result: { data: Product } = await response.json() 
+  
+  return result.data 
+}
+
+export async function updateProduct(
+  id: number,
+  product: {
+    category_id: number
+    name: string
+    description: string
+    price: number
+    is_available: boolean
+  }
+): Promise<Product> {
+  const response = await fetch(`${API_URL}/products/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify(product),
+  })
+
+  if (!response.ok) {
+    throw new Error('Error al actualizar el producto')
+  }
+
+  const result: { data: Product } = await response.json()
+
+  return result.data
+}
+
+
+export async function deleteProduct(id: number): Promise<void> {
+  const response = await fetch(`${API_URL}/products/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Accept': 'application/json',
+    },
+  })
+
+  if (!response.ok) {
+    throw new Error('Error al eliminar el producto')
+  }
+}
