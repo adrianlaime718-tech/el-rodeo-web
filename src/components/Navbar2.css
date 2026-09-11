@@ -1,0 +1,233 @@
+:root {
+    /* =========================
+       PALETA EL RODEO — SOBRIA
+       ========================= */
+
+    --rodeo-black: #171717;
+    --rodeo-black-soft: #242424;
+
+    --rodeo-gold: #C9A227;
+    --rodeo-gold-light: #E2C766;
+
+    --rodeo-red: #9F2929;
+
+    --rodeo-bg: #F7F5F0;
+    --rodeo-white: #FFFFFF;
+
+    --rodeo-text: #292929;
+    --rodeo-muted: #777777;
+    --rodeo-border: #E5E1D8;
+}
+
+
+/* =========================
+   NAVBAR
+   ========================= */
+
+.navbar {
+  width: 100%;  
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 14px 32px;
+
+  background: var(--rodeo-white);
+  border-bottom: 1px solid var(--rodeo-border);
+
+  min-height: 64px;
+  box-sizing: border-box;
+}
+
+
+/* =========================
+   BRAND
+   ========================= */
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+
+/* Logo */
+
+.navbar-logo {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    /* Dorado en lugar de rojo */
+    background: var(--rodeo-black);
+
+    color: var(--rodeo-gold);
+
+    font-size: 16px;
+    font-weight: bold;
+
+    border: 1px solid var(--rodeo-gold);
+}
+
+
+/* Nombre */
+
+.navbar-brand h1 {
+    font-size: 20px;
+    line-height: 1;
+
+    margin-bottom: 4px;
+
+    color: var(--rodeo-black);
+}
+
+
+/* Subtítulo */
+
+.navbar-brand span:last-child {
+    font-size: 12px;
+    color: var(--rodeo-muted);
+}
+
+
+/* =========================
+   LINKS
+   ========================= */
+
+.navbar-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 14px;
+    flex: 2;
+}
+
+
+.navbar-links a {
+  position: relative;
+
+  padding: 8px 7px;
+  /* background-color: #f8eaea; */
+  color: var(--rodeo-text);
+
+  text-decoration: none;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  transition: 
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.navbar-links a::after {
+    content: '';
+
+    position: absolute;
+
+    /* left: 0;
+    right: 0; */
+    left: 40%;
+    right: 40%;
+    bottom: -5px;
+    /* width: 100%;  */
+
+    height: 2px;
+
+    background: var(--rodeo-white);
+
+    border-radius: 2px;
+    transition: 0.2s ease;
+    /* transition: 
+      width 0.2s ease,
+      bottom 0.2s ease; */
+}
+
+
+/* Hover */
+
+.navbar-links a:hover {
+    /* transform: translateY(-2px); */
+    color: var(--rodeo-gold);
+    /* background-color: var(--rodeo-bg); */
+}
+
+
+/* Link activo */
+
+.navbar-links a.active {
+  color: var(--rodeo-black);
+}
+
+
+/* Línea dorada */
+
+.navbar-links a.active::after {
+  left: 0;
+  right: 0;
+  background: var(--rodeo-gold);
+}
+
+/* .navbar-links a:not(.active):hover::after {
+  background: var(--rodeo-border);
+} */
+/* .navbar-links a:hover::after {
+  left: 0;
+  right: 0;
+} */
+
+
+
+/* =========================
+   LOGOUT
+   ========================= */
+
+.navbar-logout {
+    margin-left: auto;
+
+    padding: 8px 14px;
+
+    border: 1px solid var(--rodeo-black-soft);
+    border-radius: 6px;
+
+    background: var(--rodeo-black);
+    color: var(--rodeo-white);
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+    white-space: nowrap;
+
+    transition: 0.2s ease;
+    /* transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        color 0.2s ease; */
+}
+
+
+/* Hover */
+
+.navbar-logout:hover {
+    /* transform: translateY(-2px); */
+    /* transform: scale(1.1); */
+    background: var(--rodeo-gold);
+    border-color: var(--rodeo-gold);
+    color: var(--rodeo-black);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.09);
+}
+
+/* Click */
+
+.navbar-logout:active {
+    transform: translateY(1px);
+}

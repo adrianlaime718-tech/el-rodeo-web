@@ -43,16 +43,95 @@ function Products() {
       })
   }, [])
 
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      description: '',
+      category_id: '',
+      price: '',
+    })
+
+    setEditingProductId(null)
+    setShowForm(false)
+  }
+
+  const handleSaveProduct = async () => {
+    try {
+      if (editingProductId !== null) {
+        const updatedProduct = await updateProduct(editingProductId, {
+          name: formData.name,
+          description: formData.description,
+          category_id: Number(formData.category_id),
+          price: Number(formData.price),
+          is_available: true,
+        })
+
+        setProducts(
+          products.map((product) =>
+            product.id === editingProductId
+              ? updatedProduct
+              : product
+          )
+        )
+      } else {
+        const newProduct = await createProduct({
+          name: formData.name,
+          description: formData.description,
+          category_id: Number(formData.category_id),
+          price: Number(formData.price),
+          is_available: true,
+        })
+
+        setProducts([...products, newProduct])
+      }
+
+      // setShowForm(false)
+      // setEditingProductId(null)
+
+      // setFormData({
+      //   name: '',
+      //   description: '',
+      //   category_id: '',
+      //   price: '',
+      // })
+      setError('')
+      resetForm()
+    } catch (error) {
+      setError(
+        editingProductId !== null
+          ? 'No se pudo actualizar el producto.'
+          : 'No se pudo crear el producto.'
+      )
+    }
+  }
+
+  const handleDeleteProduct = async (product: Product) => {
+    const confirmed = window.confirm(
+      `¿Estás seguro de eliminar el producto #${product.name}?`
+    )
+
+    if (!confirmed) {
+      return
+    }
+
+    try {
+      await deleteProduct(product.id)
+
+      setProducts(
+        products.filter((item) => item.id !== product.id)
+      )
+    } catch (error) {
+      setError('No se pudo eliminar el producto.')
+    }
+  }
+
   return (
-    <section className="products">
-
-      {loading && <p>Cargando productos...</p>}
-
-      {error && <p>{error}</p>}
-
-      <div className="products-header">
+    <section className="page products">
+      <div className="page-header products-header">
         <div>
-          <span className="products-label">GESTIÓN</span>
+          <span className="page-label products-label">
+            GESTIÓN DE PRODUCTOS
+          </span>
           <h1>Productos</h1>
           <p>
             Administra los productos disponibles en el restaurante El Rodeo.
@@ -68,8 +147,13 @@ function Products() {
       </div>
 
       {showForm && (
-        <div className="product-form">
-          <h2>Nuevo producto</h2>
+        <div className="page-form product-form">
+          {/* <h2>Nuevo producto</h2> */}
+          <h2>
+            {editingProductId !== null
+              ? 'Editar producto'
+              : 'Nuevo producto'}
+          </h2>
 
           <div className="form-group">
             <label>Nombre</label>
@@ -147,170 +231,107 @@ function Products() {
             <button
               type="button"
               className="btn-cancel"
-              onClick={() => setShowForm(false)}
+              // onClick={() => setShowForm(false)}
+              onClick={resetForm}
             >
               Cancelar
             </button>
 
-            {/* <button
-              type="button"
-              className="btn-primary"
-            >
-              Guardar producto
-            </button> */}
-
             <button
               type="button"
               className="btn-primary"
-              onClick={async () => {
-                try {
-                  if (editingProductId !== null) {
-                    const updatedProduct = await updateProduct(editingProductId, {
-                      name: formData.name,
-                      description: formData.description,
-                      category_id: Number(formData.category_id),
-                      price: Number(formData.price),
-                      is_available: true,
-                    })
-
-                    setProducts(
-                      products.map((product) =>
-                        product.id === editingProductId
-                          ? updatedProduct
-                          : product
-                      )
-                    )
-                  } else {
-                    const newProduct = await createProduct({
-                      name: formData.name,
-                      description: formData.description,
-                      category_id: Number(formData.category_id),
-                      price: Number(formData.price),
-                      is_available: true,
-                    })
-
-                    setProducts([...products, newProduct])
-                  }
-
-                  setShowForm(false)
-                  setEditingProductId(null)
-
-                  setFormData({
-                    name: '',
-                    description: '',
-                    category_id: '',
-                    price: '',
-                  })
-                } catch (error) {
-                  setError(
-                    editingProductId !== null
-                      ? 'No se pudo actualizar el producto.'
-                      : 'No se pudo crear el producto.'
-                  )
-                }
-              }}
+              onClick={handleSaveProduct}
             >
-              Guardar producto
+              {editingProductId !== null
+                ? 'Actualizar producto'
+                : 'Guardar producto'}
             </button>
           </div>
         </div>
       )}
 
-      <div className="products-table-container">
-        <table className="products-table">
-          <thead>
-            <tr>
-              <th>Producto</th>
-              <th>Categoría</th>
-              <th>Precio</th>
-              <th>Disponibilidad</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
+      {loading && <p>Cargando productos...</p>}
 
-          <tbody>
-            {products.map((product) => (
-              <tr key={product.id}>
-                <td>
-                  <strong>{product.name}</strong>
-                </td>
+      {error && <p>{error}</p>}
 
-                {/* <td>{product.category}</td> */}
-                <td>{product.category.name}</td>
-
-                <td>
-                  Bs. {Number(product.price).toFixed(2)}
-                </td>
-
-                <td>
-                  <span
-                    className={
-                      product.is_available
-                        ? 'status available'
-                        : 'status unavailable'
-                    }
-                  >
-                    {product.is_available ? 'Disponible' : 'No disponible'}
-                  </span>
-                </td>
-
-                <td>
-                  <div className="table-actions">
-                    {/* <button className="btn-edit">
-                      Editar
-                    </button> */}
-
-                    <button
-                      className="btn-edit"
-                      onClick={() => {
-                        setEditingProductId(product.id)
-                        setShowForm(true)
-
-                        setFormData({
-                          name: product.name,
-                          description: product.description ?? '',
-                          category_id: String(product.category_id),
-                          price: product.price,
-                        })
-                      }}
-                    >
-                      Editar
-                    </button>
-
-                    {/* <button className="btn-delete">
-                      Eliminar
-                    </button> */}
-                    <button
-                      className="btn-delete"
-                      onClick={async () => {
-                        const confirmed = window.confirm(
-                          `¿Estás seguro de eliminar el producto "${product.name}"?`
-                        )
-
-                        if (!confirmed) {
-                          return
-                        }
-
-                        try {
-                          await deleteProduct(product.id)
-
-                          setProducts(
-                            products.filter((item) => item.id !== product.id)
-                          )
-                        } catch (error) {
-                          setError('No se pudo eliminar el producto.')
-                        }
-                      }}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                </td>
+      {!loading && !error && (
+        <div className="table-container products-table-container">
+          <table className="table products-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th>Precio</th>
+                <th>Disponibilidad</th>
+                <th>Acciones</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+
+            <tbody>
+              {products.map((product) => (
+                <tr key={product.id}>
+                  <td>{product.id}</td>
+
+                  <td>
+                    <strong>{product.name}</strong>
+                  </td>
+
+                  {/* <td>{product.category}</td> */}
+                  <td>{product.category.name}</td>
+
+                  <td>
+                    Bs. {Number(product.price).toFixed(2)}
+                  </td>
+
+                  <td>
+                    <span
+                      className={
+                        product.is_available
+                          ? 'status available'
+                          : 'status unavailable'
+                      }
+                    >
+                      {product.is_available ? 'Disponible' : 'No disponible'}
+                    </span>
+                  </td>
+
+                  <td>
+                    <div className="table-actions">
+
+                      <button
+                        className="btn-edit"
+                        onClick={() => {
+                          setEditingProductId(product.id)
+                          setShowForm(true)
+
+                          setFormData({
+                            name: product.name,
+                            description: product.description ?? '',
+                            category_id: String(product.category_id),
+                            price: product.price,
+                          })
+                        }}
+                      >
+                        Editar
+                      </button>
+
+                      <button
+                        className="btn-delete"
+                        onClick={() =>
+                          handleDeleteProduct(product)
+                        }
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </section>
   )
 }

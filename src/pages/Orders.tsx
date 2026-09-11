@@ -147,10 +147,10 @@ function Orders() {
   }
 
   return (
-    <section className="orders">
-      <div className="orders-header">
+    <section className="page orders">
+      <div className="page-header orders-header">
         <div>
-          <span className="orders-label">
+          <span className="page-label orders-label">
             GESTIÓN DE PEDIDOS
           </span>
 
@@ -173,7 +173,7 @@ function Orders() {
       </div>
 
       {showForm && (
-        <div className="order-form">
+        <div className="page-form order-form">
           <h2>
             {editingOrderId !== null
               ? 'Editar pedido'
@@ -298,8 +298,8 @@ function Orders() {
       {error && <p className="error-message">{error}</p>}
 
       {!loading && !error && (
-        <div className="orders-table-container">
-          <table className="orders-table">
+        <div className="table-container orders-table-container">
+          <table className="table orders-table">
             <thead>
               <tr>
                 <th>ID</th>
@@ -350,7 +350,7 @@ function Orders() {
                     </span>
                   </td>
 
-                  <td className="order-actions">
+                  <td className="table-actions order-actions">
                     <button
                       className="btn-edit"
                       onClick={() => {

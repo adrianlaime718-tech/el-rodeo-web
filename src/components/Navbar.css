@@ -62,3 +62,18 @@
   background: #8b1e1e;
   color: white;
 }
+
+.navbar-logout {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  background: #9a3412;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.navbar-logout:hover {
+  background: #7c2d12;
+}

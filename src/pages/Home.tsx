@@ -3,10 +3,10 @@ import './Home.css'
 
 function Home() {
   return (
-    <section className="home">
-      <div className="home-header">
+    <section className="page home">
+      <div className="page-header home-header">
         <div>
-          <span className="home-label">RESTAURANTE EL RODEO</span>
+          <span className="page-label home-label">RESTAURANTE EL RODEO</span>
           <h1>Bienvenido al sistema de gestión</h1>
           <p>
             Administra los productos, categorías y pedidos del restaurante

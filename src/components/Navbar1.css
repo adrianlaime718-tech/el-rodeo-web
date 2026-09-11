@@ -1,0 +1,129 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 14px 32px;
+
+  /* background: white; */
+  /* Blanco para mantener la navbar limpia */
+  background: var(--rodeo-white);
+  
+  /* border-bottom: 1px solid #e5e7eb; */
+  /* Borde más acorde a la nueva paleta */
+  border-bottom: 1px solid var(--rodeo-border);
+
+  min-height: 64px;
+  box-sizing: border-box;
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+
+.navbar-logo {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  /* background: #8b1e1e;
+  color: white; */
+
+  /* Rojo principal */
+  background: var(--rodeo-red);
+
+  color: var(--rodeo-white);
+
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.navbar-brand h1 {
+  font-size: 20px;
+  line-height: 1;
+  margin-bottom: 4px;
+
+  color: var(--rodeo-black);
+}
+
+.navbar-brand span:last-child {
+  font-size: 12px;
+  /* color: #777; */
+
+  color: var(--rodeo-muted);
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  flex: 2;
+}
+
+
+.navbar-links a {
+  position: relative;
+  padding: 8px 2px;
+  /* color: #374151; */
+
+  color: var(--rodeo-text);
+
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.navbar-links a:hover {
+  /* color: #9a3412; */
+  color: var(--rodeo-red);
+}
+
+.navbar-links a.active {
+  /* color: #9a3412; */
+  color: var(--rodeo-red);
+}
+
+.navbar-links a.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 2px;
+  /* background: #9a3412; */
+  background: var(--rodeo-gold);
+  border-radius: 2px;
+}
+
+
+.navbar-logout {
+  margin-left: auto;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  /* background: #9a3412;
+  color: white; */
+
+  /* Rojo principal */
+  background: var(--rodeo-red);
+
+  color: var(--rodeo-white);
+
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.navbar-logout:hover {
+  /* background: #7c2d12; */
+  background: var(--rodeo-red-dark);
+}

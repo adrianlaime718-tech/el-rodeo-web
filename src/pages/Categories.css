@@ -1,4 +1,4 @@
-.categories {
+/* .categories {
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -27,9 +27,9 @@
   margin-top: 12px;
   font-size: 16px;
   color: #666;
-}
+} */
 
-.categories-table-container {
+/* .categories-table-container {
   overflow-x: auto;
   background: white;
   border: 1px solid #e5e7eb;
@@ -58,7 +58,7 @@
 
 .categories-table td strong {
   color: #222;
-}
+} */
 
 .category-description {
   max-width: 500px;
@@ -97,7 +97,7 @@
   }
 }
 
-.category-form {
+/* .category-form {
   background: white;
   border-radius: 12px;
   padding: 24px;
@@ -170,9 +170,9 @@
 
 .form-actions .btn-primary {
   padding: 10px 18px;
-}
+} */
 
-.category-actions {
+/* .category-actions {
   display: flex;
   gap: 8px;
 }
@@ -198,9 +198,8 @@
 
 .btn-delete {
   background: #fee2e2;
-  color: #b91c1c;
 }
 
 .btn-delete:hover {
   background: #fecaca;
-}
+} */

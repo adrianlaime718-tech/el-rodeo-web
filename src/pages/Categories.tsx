@@ -102,15 +102,15 @@ function Categories() {
   }
 
   return (
-    <section className="categories">
-      <div className="categories-header">
+    <section className="page categories">
+      <div className="page-header categories-header">
         <div>
           {/* <span className="products-label">GESTIÓN</span>
           <h1>Productos</h1>
           <p>
             Administra los productos disponibles en el restaurante El Rodeo.
           </p> */}
-          <span className="categories-label">
+          <span className="page-label categories-label">
             GESTIÓN DE CATEGORÍAS
           </span>
 
@@ -130,7 +130,7 @@ function Categories() {
       </div>
 
       {showForm && (
-        <div className="category-form">
+        <div className="page-form category-form">
           <h2>
             {editingCategoryId !== null
               ? 'Editar categoría'
@@ -195,8 +195,8 @@ function Categories() {
       {error && <p>{error}</p>}
 
       {!loading && !error && (
-        <div className="categories-table-container">
-          <table className="categories-table">
+        <div className="table-container categories-table-container">
+          <table className="table categories-table">
             <thead>
               <tr>
                 <th>ID</th>
@@ -234,7 +234,7 @@ function Categories() {
                     </span>
                   </td>
 
-                  <td className="category-actions">
+                  <td className="table-actions category-actions">
                     <button
                       className="btn-edit"
                       onClick={() => {
