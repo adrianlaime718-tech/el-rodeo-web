@@ -72,7 +72,7 @@ function Categories() {
       }
 
       resetForm()
-    } catch (error) {
+    } catch {
       setError(
         editingCategoryId !== null
           ? 'No se pudo actualizar la categoría.'
@@ -96,7 +96,7 @@ function Categories() {
       setCategories(
         categories.filter((item) => item.id !== category.id)
       )
-    } catch (error) {
+    } catch {
       setError('No se pudo eliminar la categoría.')
     }
   }

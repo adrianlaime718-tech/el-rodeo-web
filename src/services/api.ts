@@ -1,16 +1,17 @@
 import type { Category } from "../types/category"
 import type { Order } from "../types/order"
 import type { Product } from "../types/product"
+import type { Table } from "../types/table"
 
 const API_URL = 'http://localhost:8000/api'
 
-function authHeaders() {
+function authHeaders(): HeadersInit {
   const token = localStorage.getItem('token')
 
   return {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    'Authorization': `Bearer ${token}`,
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
   }
 }
 
@@ -18,44 +19,32 @@ interface ProductsResponse {
   data: Product[]
 }
 
-export async function getProducts(): Promise<Product[]> {
-  const response = await fetch(`${API_URL}/products`, {
-    headers: authHeaders(),
-  })
-
-  if (!response.ok) throw new Error('Error al obtener los productos')
-
-  const result: ProductsResponse = await response.json()
-  return result.data
-}
-
 interface CategoriesResponse {
   data: Category[]
-}
-
-export async function getCategories(): Promise<Category[]> {
-  const response = await fetch(`${API_URL}/categories`, {
-    headers: authHeaders(),
-  })
-
-  if (!response.ok) throw new Error('Error al obtener las categorías')
-
-  const result: CategoriesResponse = await response.json()
-  return result.data
 }
 
 interface OrdersResponse {
   data: Order[]
 }
 
-export async function getOrders(): Promise<Order[]> {
-  const response = await fetch(`${API_URL}/orders`, {
+interface TablesResponse {
+  data: Table[]
+}
+
+/* =========================
+   PRODUCTOS
+========================= */
+
+export async function getProducts(): Promise<Product[]> {
+  const response = await fetch(`${API_URL}/products`, {
     headers: authHeaders(),
   })
 
-  if (!response.ok) throw new Error('Error al obtener los pedidos')
+  if (!response.ok) {
+    throw new Error('Error al obtener los productos')
+  }
 
-  const result: OrdersResponse = await response.json()
+  const result: ProductsResponse = await response.json()
   return result.data
 }
 
@@ -72,7 +61,9 @@ export async function createProduct(product: {
     body: JSON.stringify(product),
   })
 
-  if (!response.ok) throw new Error('Error al crear el producto')
+  if (!response.ok) {
+    throw new Error('Error al crear el producto')
+  }
 
   const result: { data: Product } = await response.json()
   return result.data
@@ -94,7 +85,9 @@ export async function updateProduct(
     body: JSON.stringify(product),
   })
 
-  if (!response.ok) throw new Error('Error al actualizar el producto')
+  if (!response.ok) {
+    throw new Error('Error al actualizar el producto')
+  }
 
   const result: { data: Product } = await response.json()
   return result.data
@@ -106,7 +99,26 @@ export async function deleteProduct(id: number): Promise<void> {
     headers: authHeaders(),
   })
 
-  if (!response.ok) throw new Error('Error al eliminar el producto')
+  if (!response.ok) {
+    throw new Error('Error al eliminar el producto')
+  }
+}
+
+/* =========================
+   CATEGORÍAS
+========================= */
+
+export async function getCategories(): Promise<Category[]> {
+  const response = await fetch(`${API_URL}/categories`, {
+    headers: authHeaders(),
+  })
+
+  if (!response.ok) {
+    throw new Error('Error al obtener las categorías')
+  }
+
+  const result: CategoriesResponse = await response.json()
+  return result.data
 }
 
 export async function createCategory(category: {
@@ -120,7 +132,9 @@ export async function createCategory(category: {
     body: JSON.stringify(category),
   })
 
-  if (!response.ok) throw new Error('Error al crear la categoría')
+  if (!response.ok) {
+    throw new Error('Error al crear la categoría')
+  }
 
   const result: { data: Category } = await response.json()
   return result.data
@@ -140,7 +154,9 @@ export async function updateCategory(
     body: JSON.stringify(category),
   })
 
-  if (!response.ok) throw new Error('Error al actualizar la categoría')
+  if (!response.ok) {
+    throw new Error('Error al actualizar la categoría')
+  }
 
   const result: { data: Category } = await response.json()
   return result.data
@@ -152,13 +168,53 @@ export async function deleteCategory(id: number): Promise<void> {
     headers: authHeaders(),
   })
 
-  if (!response.ok) throw new Error('Error al eliminar la categoría')
+  if (!response.ok) {
+    throw new Error('Error al eliminar la categoría')
+  }
+}
+
+/* =========================
+   MESAS
+========================= */
+
+export async function getTables(): Promise<Table[]> {
+  const response = await fetch(`${API_URL}/tables`, {
+    headers: authHeaders(),
+  })
+
+  if (!response.ok) {
+    throw new Error('Error al obtener las mesas')
+  }
+
+  const result: TablesResponse = await response.json()
+  return result.data
+}
+
+/* =========================
+   PEDIDOS
+========================= */
+
+export async function getOrders(): Promise<Order[]> {
+  const response = await fetch(`${API_URL}/orders`, {
+    headers: authHeaders(),
+  })
+
+  if (!response.ok) {
+    throw new Error('Error al obtener los pedidos')
+  }
+
+  const result: OrdersResponse = await response.json()
+  return result.data
 }
 
 export async function createOrder(order: {
-  product_id: number
-  customer_name: string
-  quantity: number
+  type: string
+  table_id?: number | null
+  customer_name?: string | null
+  items: {
+    product_id: number
+    quantity: number
+  }[]
 }): Promise<Order> {
   const response = await fetch(`${API_URL}/orders`, {
     method: 'POST',
@@ -166,19 +222,22 @@ export async function createOrder(order: {
     body: JSON.stringify(order),
   })
 
-  if (!response.ok) throw new Error('Error al crear el pedido')
+  if (!response.ok) {
+    throw new Error('No se pudo crear el pedido.')
+  }
 
-  const result: { data: Order } = await response.json()
+  const result = await response.json()
+
   return result.data
 }
 
 export async function updateOrder(
   id: number,
   order: {
-    product_id: number
-    customer_name: string
-    quantity: number
-    status: string
+    type?: string
+    table_id?: number | null
+    customer_name?: string | null
+    status?: string
   }
 ): Promise<Order> {
   const response = await fetch(`${API_URL}/orders/${id}`, {
@@ -187,9 +246,38 @@ export async function updateOrder(
     body: JSON.stringify(order),
   })
 
-  if (!response.ok) throw new Error('Error al actualizar el pedido')
+  if (!response.ok) {
+    throw new Error('Error al actualizar el pedido')
+  }
 
   const result: { data: Order } = await response.json()
+  return result.data
+}
+
+export async function updateOrderItems(
+  id: number,
+  items: {
+    product_id: number
+    quantity: number
+  }[]
+): Promise<Order> {
+  const response = await fetch(
+    `${API_URL}/orders/${id}/items`,
+    {
+      method: 'PUT',
+      headers: authHeaders(),
+      body: JSON.stringify({ items }),
+    }
+  )
+
+  if (!response.ok) {
+    throw new Error(
+      'No se pudieron actualizar los productos del pedido.'
+    )
+  }
+
+  const result = await response.json()
+
   return result.data
 }
 
@@ -199,5 +287,7 @@ export async function deleteOrder(id: number): Promise<void> {
     headers: authHeaders(),
   })
 
-  if (!response.ok) throw new Error('Error al eliminar el pedido')
+  if (!response.ok) {
+    throw new Error('Error al eliminar el pedido')
+  }
 }
