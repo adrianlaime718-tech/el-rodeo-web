@@ -1,447 +1,643 @@
-# Guía para clonar y ejecutar el proyecto El Rodeo
+# El Rodeo Web
 
-## 1. Requisitos previos
+Aplicación web del sistema de gestión multicanal del restaurante **El Rodeo**, desarrollada con React y TypeScript.
 
-Antes de comenzar, se debe tener instalado:
+El frontend consume la API REST del proyecto `el-rodeo-api` para gestionar autenticación, productos, categorías, pedidos, usuarios y mesas según el rol del usuario autenticado.
 
-* **Git**
-* **Docker Desktop**
-* **WSL2**
-* Una distribución Linux en WSL, por ejemplo Ubuntu
-* **Node.js y npm** para ejecutar el frontend React
-* Visual Studio Code, recomendado
+---
 
-Verificar Git:
+## 1. Arquitectura
+
+La aplicación forma parte de una arquitectura cliente-servidor:
+
+```text
+┌──────────────────────────────┐
+│        El Rodeo Web          │
+│      React + TypeScript      │
+│                              │
+│  Navegador / Interfaz Web    │
+└──────────────┬───────────────┘
+               │ HTTP/JSON
+               ▼
+┌──────────────────────────────┐
+│        El Rodeo API          │
+│    Laravel + Sanctum         │
+│                              │
+│        REST API              │
+└──────────────┬───────────────┘
+               │
+               ▼
+┌──────────────────────────────┐
+│         PostgreSQL           │
+└──────────────────────────────┘
+```
+
+El frontend no accede directamente a PostgreSQL. Todas las operaciones de datos se realizan mediante la API REST.
+
+---
+
+## 2. Tecnologías
+
+### Frontend
+
+* React
+* TypeScript
+* Vite
+* React Router
+* Axios
+* CSS
+
+### Backend
+
+* Laravel
+* PHP
+* Laravel Sanctum
+* API REST
+* PostgreSQL
+
+### Herramientas
+
+* Node.js
+* npm
+* Git
+* Docker
+* Visual Studio Code
+
+---
+
+## 3. Requisitos
+
+Para ejecutar el frontend se necesita:
+
+* Node.js
+* npm
+* Git
+* Navegador web
+* API de El Rodeo ejecutándose
+
+Comprobar Node.js:
+
+```bash
+node --version
+```
+
+Comprobar npm:
+
+```bash
+npm --version
+```
+
+Comprobar Git:
 
 ```bash
 git --version
 ```
 
-Verificar Docker:
-
-```bash
-docker --version
-docker compose version
-```
-
-Verificar Node.js:
-
-```bash
-node --version
-npm --version
-```
+> El backend debe estar ejecutándose para que el frontend pueda autenticarse y consultar información.
 
 ---
 
-# 2. Clonar el backend
+## 4. Clonar el repositorio
 
-Abrir WSL/Ubuntu y dirigirse a la carpeta donde se guardarán los proyectos:
+El repositorio oficial es:
 
-```bash
-mkdir -p ~/proyectos
-cd ~/proyectos
+```text
+git@github.com:adrianlaime718-tech/el-rodeo-web.git
 ```
 
-Clonar el repositorio del backend:
+Clonar:
 
 ```bash
-git clone git@github.com:adrianlaime718-tech/el-rodeo-api.git
+cd ~/projects
+git clone git@github.com:adrianlaime718-tech/el-rodeo-web.git
 ```
 
 Entrar al proyecto:
 
 ```bash
-cd el-rodeo-api
+cd el-rodeo-web
 ```
 
-Comprobar que se clonó correctamente:
+Verificar el estado:
 
 ```bash
 git status
 ```
 
-Debe aparecer algo similar a:
+La rama estable para presentación es:
 
 ```text
-On branch main
-Your branch is up to date with 'origin/main'.
+main
 ```
 
 ---
 
-# 3. Configurar el backend
+## 5. Instalación
 
-Primero comprobar los archivos:
+Instalar las dependencias:
 
 ```bash
-ls
+npm install
 ```
 
-El proyecto debe contener archivos como:
+Las dependencias utilizadas por el proyecto se encuentran definidas en:
 
 ```text
-app
-artisan
-bootstrap
-config
-database
-docker-compose.yml
-routes
-composer.json
-.env.example
-```
-
-Crear el archivo `.env`:
-
-```bash
-cp .env.example .env
-```
-
-Como el backend utiliza Docker, debemos asegurarnos de que los contenedores estén configurados.
-
-Iniciar Docker:
-
-```bash
-docker compose up -d
-```
-
-Comprobar los contenedores:
-
-```bash
-docker compose ps
-```
-
-Deberíamos tener principalmente:
-
-```text
-el-rodeo-api-app
-el-rodeo-api-postgres
-```
-
-El contenedor de PostgreSQL debería aparecer funcionando/healthy.
-
----
-
-# 4. Instalar dependencias de Laravel
-
-Ejecutar:
-
-```bash
-docker compose exec app composer install
-```
-
-Después generar la clave de Laravel:
-
-```bash
-docker compose exec app php artisan key:generate
+package.json
 ```
 
 ---
 
-# 5. Configurar la base de datos
+## 6. Configuración de la API
 
-Ejecutar las migraciones:
-
-```bash
-docker compose exec app php artisan migrate
-```
-
-Si el proyecto incluye datos iniciales mediante seeders:
-
-```bash
-docker compose exec app php artisan db:seed
-```
-
-Si se desea ejecutar migraciones y seeders juntos:
-
-```bash
-docker compose exec app php artisan migrate --seed
-```
-
-> **Importante:** para una instalación nueva, `migrate --seed` es normalmente lo más cómodo. No ejecutar `migrate:fresh` en una base de datos que contenga información que se quiera conservar.
-
----
-
-# 6. Crear el usuario administrador
-
-El sistema actualmente utiliza autenticación mediante **Laravel Sanctum**.
-
-Si la base de datos no contiene todavía el usuario administrador, entrar al contenedor:
-
-```bash
-docker compose exec app php artisan tinker
-```
-
-Y ejecutar:
-
-```php
-\App\Models\User::create([
-    'name' => 'Administrador',
-    'email' => 'admin@elrodeo.com',
-    'password' => \Illuminate\Support\Facades\Hash::make('Admin12345'),
-]);
-```
-
-Salir de Tinker:
-
-```text
-exit
-```
-
-Las credenciales actuales de prueba son:
-
-```text
-Correo: admin@elrodeo.com
-Contraseña: Admin12345
-```
-
----
-
-# 7. Comprobar el backend
-
-Ver las rutas:
-
-```bash
-docker compose exec app php artisan route:list --path=api
-```
-
-El backend debe exponer, entre otras, estas rutas:
-
-```text
-POST   /api/login
-POST   /api/logout
-
-/api/categories
-/api/products
-/api/orders
-```
-
-La API estará disponible en:
-
-```text
-http://localhost:8000
-```
-
-Y la API:
+La aplicación utiliza la siguiente dirección para comunicarse con el backend durante el desarrollo:
 
 ```text
 http://localhost:8000/api
 ```
 
----
-
-# 8. Clonar el frontend
-
-Abrir **otra terminal WSL**.
-
-Ir nuevamente a proyectos:
-
-```bash
-cd ~/proyectos
-```
-
-Clonar el frontend:
-
-```bash
-git clone git@github.com:adrianlaime718-tech/el-rodeo-web.git
-```
-
-Entrar:
-
-```bash
-cd el-rodeo-web
-```
-
-Comprobar:
-
-```bash
-git status
-```
-
----
-
-# 9. Instalar las dependencias de React
-
-Dentro de:
+La configuración se encuentra en:
 
 ```text
-~/proyectos/el-rodeo-web
+src/services/api.ts
 ```
 
-ejecutar:
-
-```bash
-npm install
-```
-
-Esto instalará las dependencias definidas en `package.json`, incluyendo React Router.
+El backend debe estar disponible antes de iniciar sesión o realizar operaciones que requieran datos.
 
 ---
 
-# 10. Ejecutar el frontend
+## 7. Ejecutar el proyecto
 
-Ejecutar:
+Iniciar el servidor de desarrollo:
 
 ```bash
 npm run dev
 ```
 
-Vite mostrará algo similar a:
+Vite mostrará una dirección similar a:
 
 ```text
-Local: http://localhost:5173/
+http://localhost:5173/
 ```
 
-Abrir en el navegador:
-
-[http://localhost:5173/](http://localhost:5173/?utm_source=chatgpt.com)
+Abrir esa dirección en el navegador.
 
 ---
 
-# 11. Iniciar sesión
+## 8. Autenticación
 
-Al acceder al sistema, se mostrará la pantalla de inicio de sesión.
+La aplicación utiliza autenticación mediante tokens proporcionados por Laravel Sanctum.
 
-Utilizar:
-
-```text
-Correo:
-admin@elrodeo.com
-
-Contraseña:
-Admin12345
-```
-
-Después de iniciar sesión, el frontend guarda el token de autenticación y permite acceder a:
+El proceso es:
 
 ```text
-/
- /products
- /categories
- /orders
+Usuario
+   │
+   ▼
+Pantalla de Login
+   │
+   ▼
+POST /api/login
+   │
+   ▼
+Token de autenticación
+   │
+   ▼
+Almacenamiento local
+   │
+   ▼
+Peticiones autenticadas a la API
 ```
 
-El frontend envía automáticamente el token en las peticiones a la API.
+El token se envía automáticamente en las peticiones que requieren autenticación.
+
+Para cerrar sesión, el frontend utiliza:
+
+```text
+POST /api/logout
+```
+
+Además de eliminar la sesión local, el backend invalida el token correspondiente.
 
 ---
 
-# 12. Orden correcto para ejecutar el proyecto
+## 9. Roles y permisos
 
-Cada vez que se quiera trabajar con el proyecto, el orden recomendado es:
+El sistema web contempla tres roles principales:
 
-### Terminal 1 — Backend
+### Administrador
+
+Tiene acceso a las funciones administrativas:
+
+* Inicio
+* Gestión de pedidos
+* Gestión de productos
+* Gestión de categorías
+* Gestión de usuarios
+* Gestión de mesas
+* Cierre de sesión
+
+### Mesero
+
+Tiene acceso principalmente a:
+
+* Inicio
+* Gestión de pedidos
+* Consulta y creación de pedidos
+* Cierre de sesión
+
+### Cocina
+
+Tiene acceso principalmente a:
+
+* Inicio
+* Gestión y actualización del estado de pedidos
+* Cierre de sesión
+
+Las rutas protegidas se controlan mediante componentes de protección de rutas.
+
+---
+
+## 10. Protección de rutas
+
+La aplicación utiliza componentes para controlar el acceso a las diferentes páginas.
+
+Entre ellos:
+
+```text
+ProtectedRoute
+AdminRoute
+```
+
+`ProtectedRoute` evita que usuarios no autenticados accedan a las páginas protegidas.
+
+`AdminRoute` restringe las páginas administrativas a usuarios con rol de administrador.
+
+---
+
+## 11. Funcionalidades
+
+### Autenticación
+
+* Inicio de sesión
+* Cierre de sesión
+* Persistencia de sesión mediante token
+* Control de acceso según rol
+
+### Productos
+
+El administrador puede:
+
+* Consultar productos
+* Crear productos
+* Editar productos
+* Activar o desactivar productos
+* Eliminar productos
+
+### Categorías
+
+El administrador puede:
+
+* Consultar categorías
+* Crear categorías
+* Editar categorías
+* Activar o desactivar categorías
+* Eliminar categorías
+
+### Pedidos
+
+La aplicación permite:
+
+* Consultar pedidos
+* Crear pedidos
+* Agregar productos a los pedidos
+* Modificar los productos de un pedido pendiente
+* Actualizar el estado de los pedidos
+* Eliminar pedidos según permisos
+* Trabajar con pedidos para mesa
+* Trabajar con pedidos para llevar
+
+Los pedidos utilizan estados como:
+
+```text
+pending
+confirmed
+completed
+cancelled
+```
+
+### Mesas
+
+El administrador puede:
+
+* Consultar mesas
+* Crear mesas
+* Editar mesas
+* Activar o desactivar mesas
+
+Los meseros pueden consultar las mesas necesarias para registrar pedidos.
+
+### Usuarios
+
+El administrador puede:
+
+* Consultar usuarios
+* Crear usuarios
+* Editar usuarios
+* Gestionar roles y estado de los usuarios
+
+---
+
+## 12. Estructura de pedidos
+
+Los pedidos utilizan una estructura basada en elementos (`items`).
+
+Ejemplo conceptual:
+
+```json
+{
+  "type": "mesa",
+  "table_id": 1,
+  "customer_name": null,
+  "items": [
+    {
+      "product_id": 1,
+      "quantity": 2
+    }
+  ]
+}
+```
+
+Para pedidos para llevar puede utilizarse:
+
+```json
+{
+  "type": "para_llevar",
+  "table_id": null,
+  "customer_name": "Cliente",
+  "items": [
+    {
+      "product_id": 1,
+      "quantity": 2
+    }
+  ]
+}
+```
+
+El cálculo de precios y totales es responsabilidad del backend.
+
+---
+
+## 13. Comunicación con la API
+
+La comunicación HTTP se centraliza principalmente en:
+
+```text
+src/services/api.ts
+```
+
+El frontend utiliza las funciones del servicio para realizar operaciones como:
+
+```text
+Login
+Logout
+Productos
+Categorías
+Pedidos
+Mesas
+Usuarios
+```
+
+La respuesta de la API se procesa en los componentes y páginas correspondientes.
+
+---
+
+## 14. Estructura del proyecto
+
+La estructura principal es:
+
+```text
+el-rodeo-web/
+│
+├── public/
+│
+├── src/
+│   ├── components/
+│   │   ├── Navbar.tsx
+│   │   └── ...
+│   │
+│   ├── layouts/
+│   │   └── MainLayout.tsx
+│   │
+│   ├── pages/
+│   │   ├── Home/
+│   │   ├── Login/
+│   │   ├── Products/
+│   │   ├── Categories/
+│   │   ├── Orders/
+│   │   ├── Users/
+│   │   └── Tables/
+│   │
+│   ├── services/
+│   │   └── api.ts
+│   │
+│   ├── types/
+│   │   ├── category.ts
+│   │   ├── order.ts
+│   │   └── product.ts
+│   │
+│   ├── App.tsx
+│   ├── App.css
+│   └── index.css
+│
+├── package.json
+├── package-lock.json
+├── tsconfig.json
+├── tsconfig.app.json
+├── tsconfig.node.json
+├── vite.config.ts
+└── README.md
+```
+
+---
+
+## 15. Scripts disponibles
+
+Los principales comandos definidos en `package.json` son:
+
+### Desarrollo
 
 ```bash
-cd ~/proyectos/el-rodeo-api
+npm run dev
+```
+
+### Compilación
+
+```bash
+npm run build
+```
+
+### Linter
+
+```bash
+npm run lint
+```
+
+### Vista previa de producción
+
+```bash
+npm run preview
+```
+
+---
+
+## 16. Compilación para producción
+
+Para comprobar que el proyecto puede compilarse correctamente:
+
+```bash
+npm run build
+```
+
+El resultado se genera en:
+
+```text
+dist/
+```
+
+Una compilación exitosa indica que TypeScript y Vite pudieron generar la aplicación de producción.
+
+---
+
+## 17. Flujo de ejecución completo
+
+Para trabajar con el sistema completo:
+
+### Terminal 1 — API
+
+```bash
+cd ~/projects/el-rodeo/el-rodeo-api
 docker compose up -d
 ```
 
-Comprobar:
+Verificar:
 
 ```bash
 docker compose ps
 ```
 
-### Terminal 2 — Frontend
+### Terminal 2 — Web
 
 ```bash
-cd ~/proyectos/el-rodeo-web
+cd ~/projects/el-rodeo/el-rodeo-web
 npm run dev
 ```
 
-Después abrir:
+Abrir:
 
 ```text
 http://localhost:5173
 ```
 
----
-
-# 13. Detener el proyecto
-
-Para detener el frontend:
+El flujo general es:
 
 ```text
-Ctrl + C
-```
-
-Para detener los contenedores del backend:
-
-```bash
-docker compose down
-```
-
-Esto detiene los contenedores, pero **no elimina los datos de PostgreSQL**.
-
-Para volver a iniciar posteriormente:
-
-```bash
-docker compose up -d
+Navegador
+    │
+    ▼
+El Rodeo Web
+    │
+    │ HTTP/JSON
+    ▼
+El Rodeo API
+    │
+    ▼
+PostgreSQL
 ```
 
 ---
 
-# 14. Flujo completo resumido
+## 18. Pruebas básicas
 
-Una instalación desde cero quedaría así:
+Antes de realizar una presentación o entrega se recomienda comprobar:
 
-```bash
-# BACKEND
-cd ~/proyectos
-git clone git@github.com:adrianlaime718-tech/el-rodeo-api.git
-cd el-rodeo-api
+1. El backend está ejecutándose.
+2. El frontend inicia correctamente.
+3. El login funciona.
+4. El usuario recibe acceso según su rol.
+5. Los productos se muestran correctamente.
+6. Las categorías se muestran correctamente.
+7. Los pedidos pueden consultarse.
+8. Los pedidos pueden crearse según el rol.
+9. Los estados de los pedidos pueden actualizarse según los permisos.
+10. Las funciones administrativas de usuarios y mesas funcionan para el administrador.
+11. El cierre de sesión funciona correctamente.
 
-cp .env.example .env
+---
 
-docker compose up -d
+## 19. Git y ramas
 
-docker compose exec app composer install
-docker compose exec app php artisan key:generate
-docker compose exec app php artisan migrate --seed
-```
-
-Luego:
-
-```bash
-# FRONTEND
-cd ~/proyectos
-git clone git@github.com:adrianlaime718-tech/el-rodeo-web.git
-cd el-rodeo-web
-
-npm install
-npm run dev
-```
-
-Y acceder a:
+Durante el desarrollo se utiliza:
 
 ```text
-http://localhost:5173
+develop
+```
+
+para nuevos cambios.
+
+La rama:
+
+```text
+main
+```
+
+contiene la versión estable preparada para presentación.
+
+Consultar la rama actual:
+
+```bash
+git branch --show-current
+```
+
+Consultar el estado:
+
+```bash
+git status
+```
+
+Actualizar la información del repositorio:
+
+```bash
+git pull origin main
 ```
 
 ---
 
-## 15. Estructura final
+## 20. Repositorio
 
-Después de clonar ambos repositorios:
+Repositorio oficial:
 
 ```text
-~/proyectos/
-│
-├── el-rodeo-api/
-│   ├── app/
-│   ├── database/
-│   ├── routes/
-│   ├── docker-compose.yml
-│   ├── composer.json
-│   └── ...
-│
-└── el-rodeo-web/
-    ├── src/
-    │   ├── components/
-    │   ├── layouts/
-    │   ├── pages/
-    │   ├── services/
-    │   └── types/
-    ├── package.json
-    └── ...
+git@github.com:adrianlaime718-tech/el-rodeo-web.git
 ```
+
+---
+
+## 21. Relación con los demás componentes
+
+El proyecto Web es uno de los clientes del sistema El Rodeo.
+
+```text
+                    ┌─────────────────────┐
+                    │   El Rodeo API      │
+                    │ Laravel + Sanctum   │
+                    └──────────┬──────────┘
+                               │
+                    ┌──────────┴──────────┐
+                    │                     │
+                    ▼                     ▼
+             El Rodeo Web          El Rodeo Mobile
+             React + Vite             Flutter
+```
+
+El frontend web y la aplicación móvil utilizan la misma API para acceder a los datos y aplicar las reglas de negocio centralizadas en el backend.
