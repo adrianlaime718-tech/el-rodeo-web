@@ -287,10 +287,26 @@ function Orders() {
      */
 
     try {
-      if (role === 'admin' || role === 'mesero') {
-        if (!validateItems()) {
-          return
-        }
+      const currentOrder = orders.find(
+        (order) => order.id === editingOrderId
+      )
+
+      if (!currentOrder) {
+        setError('No se encontró el pedido.')
+        return
+      }
+
+      const canUpdateItems =
+        (role === 'admin' || role === 'mesero') &&
+        currentOrder.status === 'pending'
+
+      const canUpdateStatus =
+        (role === 'admin' || role === 'cocina') &&
+        (currentOrder.status === 'pending' ||
+          currentOrder.status === 'confirmed')
+
+      if (canUpdateItems) {
+        if (!validateItems()) return
 
         await updateOrderItems(
           editingOrderId,
@@ -302,16 +318,16 @@ function Orders() {
       }
 
       if (
-        canChangeStatus &&
-        formData.status !== 'pending'
+        canUpdateStatus &&
+        formData.status !== currentOrder.status
       ) {
-        await updateOrder(editingOrderId, {
-          status: formData.status,
-        })
+        await updateOrder(
+          editingOrderId,
+          { status: formData.status }
+        )
       }
 
       const refreshedOrders = await getOrders()
-
       setOrders(refreshedOrders)
       resetForm()
     } catch {
@@ -345,27 +361,16 @@ function Orders() {
 
   const handleEditOrder = (order: Order) => {
     const canEditItems =
-      role === 'admin' || role === 'mesero'
+      (role === 'admin' || role === 'mesero') &&
+      order.status === 'pending'
 
     const canChangeThisStatus =
       (role === 'admin' || role === 'cocina') &&
       (order.status === 'pending' ||
         order.status === 'confirmed')
 
-    if (
-      order.status !== 'pending' &&
-      !canChangeThisStatus
-    ) {
-      setError(
-        'Este pedido ya no puede ser modificado.'
-      )
-      return
-    }
-
     if (!canEditItems && !canChangeThisStatus) {
-      setError(
-        'No tienes permisos para modificar este pedido.'
-      )
+      setError('Este pedido ya no puede ser modificado.')
       return
     }
 
@@ -376,22 +381,19 @@ function Orders() {
         order.type === 'para_llevar'
           ? 'para_llevar'
           : 'mesa',
-
       table_id:
         order.table?.id
           ? String(order.table.id)
           : '',
-
       customer_name:
         order.customer_name ?? '',
-
       items: order.items.map((item) => ({
-        product_id: item.product
-          ? String(item.product.id)
-          : '',
+        product_id:
+          item.product
+            ? String(item.product.id)
+            : '',
         quantity: String(item.quantity),
       })),
-
       status: order.status,
     })
 
@@ -454,7 +456,8 @@ function Orders() {
   const canEditItems =
     !isEditing ||
     (isEditing &&
-      (role === 'admin' || role === 'mesero'))
+      (role === 'admin' || role === 'mesero') &&
+      formData.status === 'pending')
 
   const canEditStatus =
     isEditing && canChangeStatus
@@ -752,9 +755,11 @@ function Orders() {
               className="btn-primary"
               onClick={handleSaveOrder}
             >
-              {isEditing
-                ? 'Actualizar pedido'
-                : 'Guardar pedido'}
+              {!isEditing
+                ? 'Guardar pedido'
+                : role === 'cocina'
+                  ? 'Actualizar estado'
+                  : 'Actualizar pedido'}
             </button>
           </div>
         </div>
