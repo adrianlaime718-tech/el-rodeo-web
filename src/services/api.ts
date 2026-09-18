@@ -1,7 +1,8 @@
-import type { Category } from "../types/category"
-import type { Order } from "../types/order"
-import type { Product } from "../types/product"
-import type { Table } from "../types/table"
+import type { Category } from '../types/category'
+import type { Order } from '../types/order'
+import type { Product } from '../types/product'
+import type { Table } from '../types/table'
+import type { User } from '../types/user'
 
 const API_URL = 'http://localhost:8000/api'
 
@@ -31,9 +32,13 @@ interface TablesResponse {
   data: Table[]
 }
 
-/* =========================
-   PRODUCTOS
-========================= */
+interface UsersResponse {
+  data: User[]
+}
+
+// ====================
+// PRODUCTOS
+// ====================
 
 export async function getProducts(): Promise<Product[]> {
   const response = await fetch(`${API_URL}/products`, {
@@ -48,13 +53,15 @@ export async function getProducts(): Promise<Product[]> {
   return result.data
 }
 
-export async function createProduct(product: {
-  category_id: number
-  name: string
-  description: string
-  price: number
-  is_available: boolean
-}): Promise<Product> {
+export async function createProduct(
+  product: {
+    name: string
+    description?: string
+    price: number
+    category_id: number
+    is_available?: boolean
+  }
+): Promise<Product> {
   const response = await fetch(`${API_URL}/products`, {
     method: 'POST',
     headers: authHeaders(),
@@ -65,18 +72,18 @@ export async function createProduct(product: {
     throw new Error('Error al crear el producto')
   }
 
-  const result: { data: Product } = await response.json()
+  const result = await response.json()
   return result.data
 }
 
 export async function updateProduct(
   id: number,
   product: {
-    category_id: number
-    name: string
-    description: string
-    price: number
-    is_available: boolean
+    name?: string
+    description?: string
+    price?: number
+    category_id?: number
+    is_available?: boolean
   }
 ): Promise<Product> {
   const response = await fetch(`${API_URL}/products/${id}`, {
@@ -89,7 +96,7 @@ export async function updateProduct(
     throw new Error('Error al actualizar el producto')
   }
 
-  const result: { data: Product } = await response.json()
+  const result = await response.json()
   return result.data
 }
 
@@ -104,9 +111,9 @@ export async function deleteProduct(id: number): Promise<void> {
   }
 }
 
-/* =========================
-   CATEGORÍAS
-========================= */
+// ====================
+// CATEGORÍAS
+// ====================
 
 export async function getCategories(): Promise<Category[]> {
   const response = await fetch(`${API_URL}/categories`, {
@@ -121,11 +128,9 @@ export async function getCategories(): Promise<Category[]> {
   return result.data
 }
 
-export async function createCategory(category: {
-  name: string
-  description: string
-  is_active: boolean
-}): Promise<Category> {
+export async function createCategory(
+  category: Omit<Category, 'id'>
+): Promise<Category> {
   const response = await fetch(`${API_URL}/categories`, {
     method: 'POST',
     headers: authHeaders(),
@@ -136,17 +141,13 @@ export async function createCategory(category: {
     throw new Error('Error al crear la categoría')
   }
 
-  const result: { data: Category } = await response.json()
+  const result = await response.json()
   return result.data
 }
 
 export async function updateCategory(
   id: number,
-  category: {
-    name: string
-    description: string
-    is_active: boolean
-  }
+  category: Partial<Omit<Category, 'id'>>
 ): Promise<Category> {
   const response = await fetch(`${API_URL}/categories/${id}`, {
     method: 'PUT',
@@ -158,7 +159,7 @@ export async function updateCategory(
     throw new Error('Error al actualizar la categoría')
   }
 
-  const result: { data: Category } = await response.json()
+  const result = await response.json()
   return result.data
 }
 
@@ -173,9 +174,9 @@ export async function deleteCategory(id: number): Promise<void> {
   }
 }
 
-/* =========================
-   MESAS
-========================= */
+// ====================
+// MESAS
+// ====================
 
 export async function getTables(): Promise<Table[]> {
   const response = await fetch(`${API_URL}/tables`, {
@@ -190,9 +191,110 @@ export async function getTables(): Promise<Table[]> {
   return result.data
 }
 
-/* =========================
-   PEDIDOS
-========================= */
+export async function createTable(
+  table: Pick<Table, 'name'> & Partial<Pick<Table, 'is_active'>>
+): Promise<Table> {
+  const response = await fetch(`${API_URL}/tables`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify(table),
+  })
+
+  if (!response.ok) {
+    throw new Error('Error al crear la mesa')
+  }
+
+  const result = await response.json()
+  return result.data
+}
+
+export async function updateTable(
+  id: number,
+  table: Partial<Pick<Table, 'name' | 'is_active'>>
+): Promise<Table> {
+  const response = await fetch(`${API_URL}/tables/${id}`, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify(table),
+  })
+
+  if (!response.ok) {
+    throw new Error('Error al actualizar la mesa')
+  }
+
+  const result = await response.json()
+  return result.data
+}
+
+// ====================
+// USUARIOS
+// ====================
+
+export async function getUsers(): Promise<User[]> {
+  const response = await fetch(`${API_URL}/users`, {
+    headers: authHeaders(),
+  })
+
+  if (!response.ok) {
+    throw new Error('Error al obtener los usuarios')
+  }
+
+  const result: UsersResponse = await response.json()
+  return result.data
+}
+
+export async function createUser(
+  user: {
+    name: string
+    email: string
+    password: string
+    role: User['role']
+    is_active?: boolean
+  }
+): Promise<User> {
+  const response = await fetch(`${API_URL}/users`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify(user),
+  })
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => null)
+    throw new Error(data?.message || 'Error al crear el usuario')
+  }
+
+  const result = await response.json()
+  return result.data
+}
+
+export async function updateUser(
+  id: number,
+  user: {
+    name?: string
+    email?: string
+    password?: string
+    role?: User['role']
+    is_active?: boolean
+  }
+): Promise<User> {
+  const response = await fetch(`${API_URL}/users/${id}`, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify(user),
+  })
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => null)
+    throw new Error(data?.message || 'Error al actualizar el usuario')
+  }
+
+  const result = await response.json()
+  return result.data
+}
+
+// ====================
+// PEDIDOS
+// ====================
 
 export async function getOrders(): Promise<Order[]> {
   const response = await fetch(`${API_URL}/orders`, {
@@ -208,7 +310,7 @@ export async function getOrders(): Promise<Order[]> {
 }
 
 export async function createOrder(order: {
-  type: string
+  type: 'mesa' | 'para_llevar'
   table_id?: number | null
   customer_name?: string | null
   items: {
@@ -223,21 +325,17 @@ export async function createOrder(order: {
   })
 
   if (!response.ok) {
-    throw new Error('No se pudo crear el pedido.')
+    throw new Error('Error al crear el pedido')
   }
 
   const result = await response.json()
-
   return result.data
 }
 
 export async function updateOrder(
   id: number,
   order: {
-    type?: string
-    table_id?: number | null
-    customer_name?: string | null
-    status?: string
+    status?: Order['status']
   }
 ): Promise<Order> {
   const response = await fetch(`${API_URL}/orders/${id}`, {
@@ -250,7 +348,7 @@ export async function updateOrder(
     throw new Error('Error al actualizar el pedido')
   }
 
-  const result: { data: Order } = await response.json()
+  const result = await response.json()
   return result.data
 }
 
@@ -261,23 +359,17 @@ export async function updateOrderItems(
     quantity: number
   }[]
 ): Promise<Order> {
-  const response = await fetch(
-    `${API_URL}/orders/${id}/items`,
-    {
-      method: 'PUT',
-      headers: authHeaders(),
-      body: JSON.stringify({ items }),
-    }
-  )
+  const response = await fetch(`${API_URL}/orders/${id}/items`, {
+    method: 'PUT',
+    headers: authHeaders(),
+    body: JSON.stringify({ items }),
+  })
 
   if (!response.ok) {
-    throw new Error(
-      'No se pudieron actualizar los productos del pedido.'
-    )
+    throw new Error('Error al actualizar los productos del pedido')
   }
 
   const result = await response.json()
-
   return result.data
 }
 
