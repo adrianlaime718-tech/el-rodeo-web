@@ -1,28 +1,26 @@
-
-/* #root {
-} */
-
 :root {
   --rodeo-black: #111111;
-  /* --rodeo-red: #C62828;
-  --rodeo-red-dark: #991B1B; */
   --rodeo-red: #8b1e1e;
   --rodeo-red-dark: #6f1717;
-  --rodeo-gold: #D4A23A;
-  
-  --rodeo-bg: #F8F6F1;
-  --rodeo-white: #FFFFFF;
-  
+  --rodeo-gold: #d4a23a;
+
+  --rodeo-bg: #f8f6f1;
+  --rodeo-white: #ffffff;
+
   --rodeo-text: #222222;
-  --rodeo-muted: #6B6B6B;
-  --rodeo-border: #E2E0DC;
-  
-  --rodeo-success: #2E7D32;
-  --rodeo-warning: #D97706;
-  --rodeo-danger: #B91C1C;
+  --rodeo-muted: #6b6b6b;
+  --rodeo-border: #e2e0dc;
+
+  --rodeo-success: #2e7d32;
+  --rodeo-warning: #d97706;
+  --rodeo-danger: #b91c1c;
 
   min-height: 100vh;
 }
+
+/* =========================
+   ESTRUCTURA GENERAL
+   ========================= */
 
 main {
   padding: 40px;
@@ -32,6 +30,10 @@ main {
   max-width: 1200px;
   margin: 0 auto;
 }
+
+/* =========================
+   ENCABEZADO DE PÁGINA
+   ========================= */
 
 .page-header {
   display: flex;
@@ -58,56 +60,130 @@ main {
   max-width: 650px;
   font-size: 16px;
   line-height: 1.6;
-  /* color: #666; */
   color: var(--rodeo-muted);
 }
 
-.table-actions {
+/* =========================
+   FORMULARIOS
+   ========================= */
+
+.page-form,
+.product-form {
+  background: var(--rodeo-white);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+}
+
+.page-form h2,
+.product-form h2 {
+  margin: 0 0 24px;
+  font-size: 22px;
+  color: #1f2937;
+}
+
+.form-group {
   display: flex;
-  gap: 8px;
+  flex-direction: column;
+  margin-bottom: 18px;
 }
 
-.table-actions button {
-  padding: 7px 12px;
-  border-radius: 7px;
-  font-size: 13px;
+.form-group label {
+  margin-bottom: 7px;
+  font-size: 14px;
   font-weight: 600;
-  cursor: pointer;
-  border: none;
-}
-
-/* .btn-edit,
-.btn-delete {
-  padding: 7px 12px;
-  border-radius: 7px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-} */
-
-.btn-edit {
-  background: #f3f4f6;
   color: #374151;
 }
 
-.btn-edit:hover {
-  background: #e5e7eb;
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px 13px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--rodeo-white);
+  color: #1f2937;
+  outline: none;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
-.btn-delete {
-  background: #fee2e2;
-  color: #b91c1c;
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #9a3412;
+  box-shadow: 0 0 0 3px rgba(154, 52, 18, 0.1);
 }
 
-.btn-delete:hover {
-  background: #fecaca;
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
 }
 
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* =========================
+   BOTONES
+   ========================= */
+
+.btn-primary {
+  padding: 12px 18px;
+  border: none;
+  border-radius: 8px;
+  background: var(--rodeo-red);
+  color: var(--rodeo-white);
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: var(--rodeo-red-dark);
+}
+
+.btn-cancel {
+  padding: 10px 18px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: var(--rodeo-white);
+  color: #374151;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    border-color 0.2s;
+}
+
+.btn-cancel:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.form-actions .btn-primary {
+  padding: 10px 18px;
+}
+
+/* =========================
+   TABLAS
+   ========================= */
 
 .table-container {
   overflow-x: auto;
-  background: white;
+  background: var(--rodeo-white);
   border-radius: 12px;
   border: 1px solid #e5e7eb;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
@@ -140,12 +216,118 @@ main {
   background: #fafafa;
 }
 
+/* =========================
+   ACCIONES DE TABLA
+   ========================= */
+
+.table-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.table-actions button {
+  padding: 7px 12px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-edit {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.btn-edit:hover {
+  background: #e5e7eb;
+}
+
+.btn-delete {
+  background: #fee2e2;
+  color: var(--rodeo-danger);
+}
+
+.btn-delete:hover {
+  background: #fecaca;
+}
+
+/* =========================
+   ESTADOS
+   ========================= */
+
+.status {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.status.available {
+  background: #e8f5e9;
+  color: var(--rodeo-success);
+}
+
+.status.unavailable {
+  background: #fbe9e7;
+  color: var(--rodeo-danger);
+}
+
+.status.pending {
+  background: #fff7ed;
+  color: var(--rodeo-warning);
+}
+
+.status.confirmed {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.status.completed {
+  background: #e8f5e9;
+  color: var(--rodeo-success);
+}
+
+.status.cancelled {
+  background: #fee2e2;
+  color: var(--rodeo-danger);
+}
+
+/* =========================
+   MENSAJES DE ERROR
+   ========================= */
+
+.error-message {
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #fee2e2;
+  color: var(--rodeo-danger);
+  font-size: 14px;
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
 @media (max-width: 800px) {
   main {
     padding: 25px 20px;
   }
 
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 20px;
+  }
+
   .page-header h1 {
     font-size: 28px;
+  }
+
+  .table th,
+  .table td {
+    padding: 14px;
   }
 }
