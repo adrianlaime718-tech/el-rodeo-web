@@ -96,7 +96,7 @@ function Products() {
       // })
       setError('')
       resetForm()
-    } catch (error) {
+    } catch {
       setError(
         editingProductId !== null
           ? 'No se pudo actualizar el producto.'
@@ -120,7 +120,7 @@ function Products() {
       setProducts(
         products.filter((item) => item.id !== product.id)
       )
-    } catch (error) {
+    } catch {
       setError('No se pudo eliminar el producto.')
     }
   }

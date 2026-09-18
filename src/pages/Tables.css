@@ -1,0 +1,202 @@
+.tables-page {
+  padding: 2rem;
+}
+
+.tables-header {
+  margin-bottom: 1.5rem;
+}
+
+.tables-header h2 {
+  margin: 0 0 0.4rem;
+}
+
+.tables-header p {
+  margin: 0;
+  color: #666;
+}
+
+.tables-content {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.tables-form-card,
+.tables-list-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.tables-form-card h3,
+.tables-list-card h3 {
+  margin-top: 0;
+}
+
+.tables-form-group {
+  margin-bottom: 1rem;
+}
+
+.tables-form-group label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+}
+
+.tables-form-group input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.7rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font: inherit;
+}
+
+.tables-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.tables-checkbox input {
+  width: auto;
+}
+
+.tables-form-actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.tables-form-actions button,
+.table-card-actions button {
+  border: 0;
+  border-radius: 6px;
+  padding: 0.6rem 0.8rem;
+  cursor: pointer;
+  font: inherit;
+}
+
+.tables-form-actions button:first-child {
+  flex: 1;
+}
+
+.tables-button-secondary {
+  background: #ddd;
+}
+
+.tables-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.tables-list-header span {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.tables-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.table-card {
+  padding: 1rem;
+  border: 1px solid #eee;
+  border-radius: 8px;
+}
+
+.table-card-inactive {
+  opacity: 0.65;
+}
+
+.table-card-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.table-card-info h4 {
+  margin: 0;
+}
+
+.tables-status {
+  display: inline-block;
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.tables-status-active {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.tables-status-inactive {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.table-card-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.table-card-actions button:first-child {
+  background: #eee;
+}
+
+.tables-button-danger {
+  background: #fbe9e7;
+  color: #c62828;
+}
+
+.tables-button-success {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.tables-message {
+  margin-bottom: 1rem;
+  padding: 0.8rem 1rem;
+  border-radius: 6px;
+}
+
+.tables-message-error {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.tables-message-success {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.tables-empty {
+  color: #666;
+  padding: 1rem 0;
+}
+
+@media (max-width: 900px) {
+  .tables-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .tables-page {
+    padding: 1rem;
+  }
+
+  .tables-grid {
+    grid-template-columns: 1fr;
+  }
+}
